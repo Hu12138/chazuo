@@ -1,16 +1,10 @@
 package site.ahzx.chazuo.util;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SecurityException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
@@ -18,7 +12,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 public class JwtTokenUtil {
@@ -29,23 +22,21 @@ public class JwtTokenUtil {
     @Value("${jwt.expiration-hours}")
     private long expirationHours;
 
-    private Key key;  // 使用安全的Key类型替代原始字符串
+    private Key key;
 
-    // 初始化密钥
     @PostConstruct
     public void init() {
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(String username, Collection<? extends GrantedAuthority> roles) {
-        if (roles == null || roles.isEmpty()) {
-            throw new AuthenticationCredentialsNotFoundException("No roles assigned");
-        }
-        
+    /**
+     * 生成Token (允许roles为null或空)
+     */
+    public String generateToken(String username, List<String> roles) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", roles.stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList()));
+        if (roles != null && !roles.isEmpty()) {
+            claims.put("roles", roles);
+        }
 
         return Jwts.builder()
                 .claims(claims)
@@ -58,49 +49,30 @@ public class JwtTokenUtil {
 
     public boolean validateToken(String token) {
         try {
-            JwtParser parser = Jwts.parser().verifyWith((SecretKey) key).build();
-            parser.parseSignedClaims(token);
+            Jwts.parser().verifyWith((SecretKey) key).build().parseSignedClaims(token);
             return true;
-        } catch (ExpiredJwtException ex) {
-            // Token已过期
-        } catch (SecurityException ex) {
-            // 签名验证失败
-        } catch (Exception e) {
-            // 其他无效Token情况
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
         }
-        return false;
     }
 
     public String getUsername(String token) {
-        return Jwts.parser()
-                .verifyWith((SecretKey) key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
+        return parseToken(token).getSubject();
     }
 
+    @SuppressWarnings("unchecked")
     public List<String> getRoles(String token) {
-        Claims claims = Jwts.parser()
-                .verifyWith((SecretKey) key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-
-        return ((List<?>) claims.get("roles")).stream()
-                .map(Object::toString)
-                .toList();
+        return (List<String>) parseToken(token).get("roles");
     }
 
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
+        return (bearerToken != null && bearerToken.startsWith("Bearer "))
+                ? bearerToken.substring(7)
+                : null;
     }
 
-    public Claims getClaims(String token) {
+    private Claims parseToken(String token) {
         return Jwts.parser()
                 .verifyWith((SecretKey) key)
                 .build()
