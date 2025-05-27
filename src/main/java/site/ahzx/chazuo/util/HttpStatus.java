@@ -1,4 +1,4 @@
-package utils;
+package site.ahzx.chazuo.util;
 public interface HttpStatus {
     /**
      * 操作成功

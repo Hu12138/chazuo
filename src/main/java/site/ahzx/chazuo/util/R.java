@@ -1,4 +1,4 @@
-package utils;
+package site.ahzx.chazuo.util;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
