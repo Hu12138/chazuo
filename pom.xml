@@ -99,7 +99,7 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>site.ahzx.chazuo.ChazuoApplication</mainClass>
-                    <skip>true</skip>
+                    
                 </configuration>
                 <executions>
                     <execution>
