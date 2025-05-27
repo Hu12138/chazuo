@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import site.ahzx.chazuo.aop.TokenCheck;
 import site.ahzx.chazuo.domain.BO.WxLogin;
 import site.ahzx.chazuo.util.JwtTokenUtil;
 import site.ahzx.chazuo.util.R;
@@ -36,6 +37,11 @@ public class AuthController {
         this.objectMapper = objectMapper;
     }
 
+    @PostMapping("/secure-api")
+    @TokenCheck
+    public R secureApi() {
+        return R.ok("你通过了 token 校验");
+    }
     @PostMapping("/wxlogin")
     public R wxlogin(@RequestBody @Validated WxLogin wxLogin) {
         String code = wxLogin.getCode();
@@ -66,9 +72,10 @@ public class AuthController {
             log.debug("openid: {}, sessionKey: {}, unionid: {}", openid, sessionKey, unionid);
 
             // 可进一步处理 openid，例如查询数据库或创建用户等
+//            openid = "test";
             String token = jwtTokenUtil.generateToken(openid, null);
 
-            return R.ok(token);
+            return R.ok("登录成功", token);
         } catch (Exception e) {
             log.error("调用微信 jscode2session 接口失败", e);
             return R.fail("微信登录异常：" + e.getMessage());

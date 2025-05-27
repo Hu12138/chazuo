@@ -65,8 +65,13 @@ public class JwtTokenUtil {
         return (List<String>) parseToken(token).get("roles");
     }
 
-    public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
+//    public String resolveToken(HttpServletRequest request) {
+//        String bearerToken = request.getHeader("Authorization");
+//        return (bearerToken != null && bearerToken.startsWith("Bearer "))
+//                ? bearerToken.substring(7)
+//                : null;
+//    }
+    public String resolveToken(String bearerToken){
         return (bearerToken != null && bearerToken.startsWith("Bearer "))
                 ? bearerToken.substring(7)
                 : null;
