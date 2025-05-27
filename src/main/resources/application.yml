@@ -1,5 +1,11 @@
 server:
   port: 18800
+  ssl:
+    enabled: true
+    key-store-type: PKCS12
+    key-store: classpath:ca/ahzx.site.pfx
+    key-password: 0wo7n2mjnmtkt
+    key-alias: ahzx.site
 spring:
   application:
     name: chazuo
