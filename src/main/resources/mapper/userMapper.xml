@@ -1,0 +1,90 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="site.ahzx.chazuo.mapper.UserMapper">
+
+    <!-- 插入用户信息，openid 必填，其他字段非必填 -->
+    <insert id="insertUser" parameterType="site.ahzx.chazuo.domain.PO.UserPO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            openid,
+            <if test="unionid != null">unionid,</if>
+            <if test="sessionKey != null">session_key,</if>
+            <if test="nickname != null">nickname,</if>
+            <if test="phone != null">phone,</if>
+            created_time,
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            #{openid},
+            <if test="unionid != null">#{unionid},</if>
+            <if test="sessionKey != null">#{sessionKey},</if>
+            <if test="nickname != null">#{nickname},</if>
+            <if test="phone != null">#{phone},</if>
+            NOW(),
+        </trim>
+    </insert>
+
+    <!-- 根据ID删除用户 -->
+    <delete id="deleteUserById" parameterType="int">
+        DELETE FROM user WHERE id = #{id}
+    </delete>
+
+    <!-- 根据ID更新用户信息，动态更新非空字段 -->
+    <update id="updateUser" parameterType="site.ahzx.chazuo.domain.PO.UserPO">
+        UPDATE user
+        <set>
+            <if test="openid != null">openid = #{openid},</if>
+            <if test="unionid != null">unionid = #{unionid},</if>
+            <if test="sessionKey != null">session_key = #{sessionKey},</if>
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="phone != null">phone = #{phone},</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <!-- 根据ID查询用户 -->
+    <select id="selectUserById" parameterType="int" resultType="site.ahzx.chazuo.domain.PO.UserPO">
+        SELECT
+            id,
+            openid,
+            unionid,
+            session_key as sessionKey,
+            nickname,
+            phone,
+            created_time as createdTime
+        FROM user
+        WHERE id = #{id}
+    </select>
+
+    <!-- 根据openid查询用户 -->
+    <select id="selectUserByOpenid" parameterType="string" resultType="site.ahzx.chazuo.domain.PO.UserPO">
+        SELECT
+            id,
+            openid,
+            unionid,
+            session_key as sessionKey,
+            nickname,
+            phone,
+            created_time as createdTime
+        FROM user
+        WHERE openid = #{openid}
+    </select>
+
+    <!-- 查询所有用户 -->
+    <select id="selectAllUsers" resultType="site.ahzx.chazuo.domain.PO.UserPO">
+        SELECT
+            id,
+            openid,
+            unionid,
+            session_key as sessionKey,
+            nickname,
+            phone,
+            created_time as createdTime
+        FROM user
+    </select>
+    <select id="countOpenId" resultType="java.lang.Integer">
+        SELECT count(*) FROM user WHERE openid = #{openid}
+    </select>
+
+
+</mapper>
