@@ -11,10 +11,12 @@ spring:
     name: chazuo
   #mysql连接配置
   datasource:
-    url: jdbc:mysql://129.211.4.96/:12098/chazuo
+    url: jdbc:mysql://129.211.4.96:12098/chazuo
     username: dcm
     password: N8xvZ2Q4kP5mT7wL
 mybatis:
+  mapper-locations:
+    classpath:mapper/*xml
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     map-underscore-to-camel-case: true
