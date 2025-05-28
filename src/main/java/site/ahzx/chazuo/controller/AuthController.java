@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import site.ahzx.chazuo.aop.TokenCheck;
+import site.ahzx.chazuo.aop.UserContext;
 import site.ahzx.chazuo.domain.BO.WxLogin;
 import site.ahzx.chazuo.domain.PO.UserPO;
 import site.ahzx.chazuo.domain.VO.WxLoginVO;
@@ -17,7 +17,7 @@ import site.ahzx.chazuo.mapper.UserMapper;
 import site.ahzx.chazuo.service.UserService;
 import site.ahzx.chazuo.util.JwtTokenUtil;
 import site.ahzx.chazuo.util.R;
-import java.util.HashMap;
+
 import java.util.Map;
 
 @RestController
@@ -39,7 +39,8 @@ public class AuthController {
     private  UserService userService ;
     @Autowired
     private ConfigurationPropertiesAutoConfiguration configurationPropertiesAutoConfiguration;
-
+    @Autowired
+    private UserContext userContext;
     @Autowired
     public AuthController(JwtTokenUtil jwtTokenUtil, RestTemplate restTemplate, ObjectMapper objectMapper, UserMapper userMapper) {
         this.jwtTokenUtil = jwtTokenUtil;
@@ -49,8 +50,9 @@ public class AuthController {
     }
 
     @PostMapping("/secure-api")
-    @TokenCheck
     public R secureApi() {
+
+        log.debug("openid is {}", userContext.getCurrentUser());
         return R.ok("你通过了 token 校验");
     }
     @PostMapping("/wxlogin")

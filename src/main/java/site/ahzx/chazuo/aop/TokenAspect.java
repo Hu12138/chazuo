@@ -19,21 +19,54 @@ public class TokenAspect {
     private HttpServletRequest request;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    private UserContext userContext;
 
-    @Pointcut("@annotation(site.ahzx.chazuo.aop.TokenCheck)")
-    public void tokenCheckPointcut() {}
 
-    @Around("tokenCheckPointcut()")
+    // 定义排除的路径
+    private static final String[] EXCLUDED_PATHS = {
+            "/auth/wxlogin",
+            "/auth/register"
+    };
+
+    // 主切点：匹配所有Controller方法
+    @Pointcut("execution(* site.ahzx.chazuo.controller..*.*(..))")
+    public void controllerPointcut() {}
+
+    // 排除切点：匹配排除的路径
+    @Pointcut("execution(* site.ahzx.chazuo.controller.AuthController.wxlogin(..)) || " +
+            "execution(* site.ahzx.chazuo.controller.AuthController.register(..))")
+    public void excludedPointcut() {}
+
+    // 最终切点：主切点且不是排除切点
+    @Pointcut("controllerPointcut() && !excludedPointcut()")
+    public void securedPointcut() {}
+
+    @Around("securedPointcut()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-        String bearerToken = request.getHeader("Authorization");
-        log.debug("Token from header: {}", bearerToken);
-        String token = jwtTokenUtil.resolveToken(bearerToken);
-        if (bearerToken == null || !jwtTokenUtil.validateToken(token)) {
-            log.warn("非法或过期的 token: {}", token);
-            return R.fail("Token 无效或已过期");
-        }
+        try {
+            String bearerToken = request.getHeader("Authorization");
+            log.debug("Token from header: {}", bearerToken);
 
-        // 如果校验通过，继续执行方法
-        return joinPoint.proceed();
+            if (bearerToken == null) {
+                log.warn("请求缺少Token");
+                return R.fail("请先登录");
+            }
+
+            String token = jwtTokenUtil.resolveToken(bearerToken);
+
+            if (!jwtTokenUtil.validateToken(token)) {
+                log.warn("非法或过期的token: {}", token);
+                return R.fail("Token无效或已过期");
+            }
+            log.debug("token 合法");
+            // 存储用户信息
+            String username = jwtTokenUtil.getUsername(token);
+            userContext.setCurrentUser(username);
+
+            return joinPoint.proceed();
+        } finally {
+            userContext.clear();
+        }
     }
 }
