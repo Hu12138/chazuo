@@ -8,5 +8,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/device")
 @Slf4j
 public class DeviceController {
-    public R add()
+
 }
