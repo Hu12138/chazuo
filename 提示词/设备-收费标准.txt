@@ -1,0 +1,1 @@
+根据@/src/main/SQL/device.sql, 来写@/src/main/java/site/ahzx/chazuo/controller/ 增删改插业务，相关的前端输入请求数据映射放在@/src/main/java/site/ahzx/chazuo/domain/BO/ 中，数据库映射放在@/src/main/java/site/ahzx/chazuo/domain/PO/ ，返回给前端的数据放在@/src/main/java/site/ahzx/chazuo/domain/VO/ 中，业务场景就是新增插电设备，并且设备要绑定收费标准
