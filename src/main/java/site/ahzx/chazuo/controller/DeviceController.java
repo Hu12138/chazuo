@@ -1,2 +1,12 @@
-package site.ahzx.chazuo.controller;public class DeviceController {
+package site.ahzx.chazuo.controller;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/device")
+@Slf4j
+public class DeviceController {
+    public R add()
 }
