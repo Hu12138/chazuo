@@ -1,0 +1,103 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="site.ahzx.chazuo.mapper.PricingStandardMapper">
+
+    <insert id="insert" parameterType="site.ahzx.chazuo.domain.PO.PricingStandardPO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO pricing_standard (
+            name,
+            type,
+            is_active,
+            created_by
+        ) VALUES (
+            #{name},
+            #{type, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+            #{isActive},
+            #{createdBy}
+        )
+    </insert>
+
+    <update id="updateById" parameterType="site.ahzx.chazuo.domain.PO.PricingStandardPO">
+        UPDATE pricing_standard
+        SET 
+            name = #{name},
+            type = #{type, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+            is_active = #{isActive}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM pricing_standard WHERE id = #{id}
+    </delete>
+
+    <select id="selectById" parameterType="long" resultType="site.ahzx.chazuo.domain.PO.PricingStandardPO">
+        SELECT 
+            id,
+            name,
+            type,
+            is_active as isActive,
+            created_by as createdBy,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM pricing_standard
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectList" resultType="site.ahzx.chazuo.domain.PO.PricingStandardPO">
+        SELECT 
+            id,
+            name,
+            type,
+            is_active as isActive,
+            created_by as createdBy,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM pricing_standard
+    </select>
+
+    <insert id="insertPricingByEnergy" parameterType="site.ahzx.chazuo.domain.PO.PricingByEnergyPO">
+        INSERT INTO pricing_by_energy (
+            standard_id,
+            has_service_fee,
+            service_fee_per_unit,
+            energy_fee_per_unit,
+            created_by
+        ) VALUES (
+            #{standardId},
+            #{hasServiceFee},
+            #{serviceFeePerUnit},
+            #{energyFeePerUnit},
+            #{createdBy}
+        )
+    </insert>
+
+    <insert id="insertPricingByTime" parameterType="site.ahzx.chazuo.domain.PO.PricingByTimePO">
+        INSERT INTO pricing_by_time (
+            standard_id,
+            time_unit,
+            time_per_yuan,
+            time_unit_per_yuan,
+            created_by
+        ) VALUES (
+            #{standardId},
+            #{timeUnit, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+            #{timePerYuan},
+            #{timeUnitPerYuan, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+            #{createdBy}
+        )
+    </insert>
+
+    <insert id="insertPricingByAmount" parameterType="site.ahzx.chazuo.domain.PO.PricingByAmountPO">
+        INSERT INTO pricing_by_amount (
+            standard_id,
+            time_unit,
+            amount_per_unit,
+            created_by
+        ) VALUES (
+            #{standardId},
+            #{timeUnit, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+            #{amountPerUnit},
+            #{createdBy}
+        )
+    </insert>
+</mapper>
