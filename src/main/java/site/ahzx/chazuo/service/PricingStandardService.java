@@ -10,8 +10,4 @@ public interface PricingStandardService {
     void deletePricingStandard(Long id);
     PricingStandardVO getPricingStandardDetail(Long id);
     List<PricingStandardVO> getPricingStandardList();
-    
-    void addPricingByEnergy(PricingByEnergyBO pricingByEnergyBO);
-    void addPricingByTime(PricingByTimeBO pricingByTimeBO);
-    void addPricingByAmount(PricingByAmountBO pricingByAmountBO);
 }

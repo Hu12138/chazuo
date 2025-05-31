@@ -18,12 +18,6 @@ public class PricingStandardServiceImpl implements PricingStandardService {
     private final PricingStandardMapper pricingStandardMapper;
 
     @Override
-    public void addPricingStandard(PricingStandardBO pricingStandardBO) {
-        PricingStandardPO po = convertToPO(pricingStandardBO);
-        pricingStandardMapper.insert(po);
-    }
-
-    @Override
     public void updatePricingStandard(PricingStandardBO pricingStandardBO) {
         PricingStandardPO po = convertToPO(pricingStandardBO);
         pricingStandardMapper.updateById(po);
@@ -49,21 +43,39 @@ public class PricingStandardServiceImpl implements PricingStandardService {
     }
 
     @Override
-    public void addPricingByEnergy(PricingByEnergyBO pricingByEnergyBO) {
-        PricingByEnergyPO po = convertToPO(pricingByEnergyBO);
-        pricingStandardMapper.insertPricingByEnergy(po);
-    }
-
-    @Override
-    public void addPricingByTime(PricingByTimeBO pricingByTimeBO) {
-        PricingByTimePO po = convertToPO(pricingByTimeBO);
-        pricingStandardMapper.insertPricingByTime(po);
-    }
-
-    @Override
-    public void addPricingByAmount(PricingByAmountBO pricingByAmountBO) {
-        PricingByAmountPO po = convertToPO(pricingByAmountBO);
-        pricingStandardMapper.insertPricingByAmount(po);
+    public void addPricingStandard(PricingStandardBO bo) {
+        // 1. 保存收费标准基本信息
+        PricingStandardPO standardPO = convertToPO(bo);
+        pricingStandardMapper.insert(standardPO);
+        
+        // 2. 根据收费类型保存具体定价规则
+        switch(bo.getType()) {
+            case BY_ENERGY:
+                PricingByEnergyPO energyPO = new PricingByEnergyPO();
+                energyPO.setStandardId(standardPO.getId());
+                energyPO.setHasServiceFee(bo.getHasServiceFee());
+                energyPO.setServiceFeePerUnit(bo.getServiceFeePerUnit());
+                energyPO.setEnergyFeePerUnit(bo.getEnergyFeePerUnit());
+                pricingStandardMapper.insertPricingByEnergy(energyPO);
+                break;
+                
+            case BY_TIME:
+                PricingByTimePO timePO = new PricingByTimePO();
+                timePO.setStandardId(standardPO.getId());
+                timePO.setTimeUnit(bo.getTimeUnit());
+                timePO.setTimePerYuan(bo.getTimePerYuan());
+                timePO.setTimeUnitPerYuan(bo.getTimeUnitPerYuan());
+                pricingStandardMapper.insertPricingByTime(timePO);
+                break;
+                
+            case BY_AMOUNT:
+                PricingByAmountPO amountPO = new PricingByAmountPO();
+                amountPO.setStandardId(standardPO.getId());
+                amountPO.setTimeUnit(bo.getTimeUnit());
+                amountPO.setAmountPerUnit(bo.getAmountPerUnit());
+                pricingStandardMapper.insertPricingByAmount(amountPO);
+                break;
+        }
     }
 
     private PricingStandardPO convertToPO(PricingStandardBO bo) {
@@ -83,29 +95,4 @@ public class PricingStandardServiceImpl implements PricingStandardService {
         return vo;
     }
 
-    private PricingByEnergyPO convertToPO(PricingByEnergyBO bo) {
-        PricingByEnergyPO po = new PricingByEnergyPO();
-        po.setStandardId(bo.getStandardId());
-        po.setHasServiceFee(bo.getHasServiceFee());
-        po.setServiceFeePerUnit(bo.getServiceFeePerUnit());
-        po.setEnergyFeePerUnit(bo.getEnergyFeePerUnit());
-        return po;
-    }
-
-    private PricingByTimePO convertToPO(PricingByTimeBO bo) {
-        PricingByTimePO po = new PricingByTimePO();
-        po.setStandardId(bo.getStandardId());
-        po.setTimeUnit(bo.getTimeUnit());
-        po.setTimePerYuan(bo.getTimePerYuan());
-        po.setTimeUnitPerYuan(bo.getTimeUnitPerYuan());
-        return po;
-    }
-
-    private PricingByAmountPO convertToPO(PricingByAmountBO bo) {
-        PricingByAmountPO po = new PricingByAmountPO();
-        po.setStandardId(bo.getStandardId());
-        po.setTimeUnit(bo.getTimeUnit());
-        po.setAmountPerUnit(bo.getAmountPerUnit());
-        return po;
-    }
 }
