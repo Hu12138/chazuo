@@ -22,9 +22,9 @@ mybatis:
     map-underscore-to-camel-case: true
 logging:
   level:
-    root: debug
+    root: info
     site.ahzx: debug
-    org.springframework.jdbc.support.JdbcTransactionManager: debug
+    org.springframework.jdbc.support.JdbcTransactionManager: info
 
 wx:
   app-id: wxd224c8ebd820134f

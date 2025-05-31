@@ -3,9 +3,11 @@ package site.ahzx.chazuo.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import site.ahzx.chazuo.aop.UserContext;
 import site.ahzx.chazuo.domain.BO.PricingStandardBO;
 import site.ahzx.chazuo.domain.VO.*;
 import site.ahzx.chazuo.service.PricingStandardService;
+import site.ahzx.chazuo.service.UserService;
 import site.ahzx.chazuo.util.R;
 
 @RestController
@@ -15,11 +17,28 @@ public class PriceStdController {
 
     @Autowired
     private PricingStandardService pricingStandardService;
+    
+    @Autowired
+    private UserContext userContext;
+    
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/add")
     public R addPricingStandard(@RequestBody PricingStandardBO pricingStandardBO) {
         try {
             log.info("新增收费标准: {}", pricingStandardBO);
+            // 从UserContext获取当前用户ID
+            String openid = userContext.getCurrentUser();
+            // 查询用户信息
+            Integer userId = userService.countOpenId(openid);
+            if (userId == null || userId == 0) {
+                return R.fail("用户不存在");
+            }
+
+            pricingStandardBO.setCreatedBy(userId.longValue());
+
+            log.debug("price standard: {}", pricingStandardBO);
             pricingStandardService.addPricingStandard(pricingStandardBO);
             return R.ok("收费标准添加成功");
         } catch (Exception e) {
