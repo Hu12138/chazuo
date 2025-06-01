@@ -36,4 +36,3 @@ jwt:
   expiration-hours: 86400 # token有效期(秒)
   token-header: Authorization
   token-prefix: "Bearer "
-

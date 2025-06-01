@@ -30,29 +30,25 @@
         DELETE FROM pricing_standard WHERE id = #{id}
     </delete>
 
-    <select id="selectById" parameterType="long" resultType="site.ahzx.chazuo.domain.PO.PricingStandardPO">
-        SELECT 
-            id,
-            name,
-            type,
-            is_active as isActive,
-            created_by as createdBy,
-            created_at as createdAt,
-            updated_at as updatedAt
-        FROM pricing_standard
-        WHERE id = #{id}
+    <resultMap id="pricingStandardResultMap" type="site.ahzx.chazuo.domain.PO.PricingStandardPO">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="type" column="type" typeHandler="org.apache.ibatis.type.EnumTypeHandler"/>
+        <result property="isActive" column="is_active"/>
+        <result property="createdBy" column="created_by"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="selectById" parameterType="long" resultMap="pricingStandardResultMap">
+        SELECT * FROM pricing_standard WHERE id = #{id}
     </select>
 
-    <select id="selectList" resultType="site.ahzx.chazuo.domain.PO.PricingStandardPO">
-        SELECT 
-            id,
-            name,
-            type,
-            is_active as isActive,
-            created_by as createdBy,
-            created_at as createdAt,
-            updated_at as updatedAt
-        FROM pricing_standard
+    <select id="selectList" resultMap="pricingStandardResultMap">
+        SELECT ps.* 
+        FROM pricing_standard ps
+        JOIN user u ON ps.created_by = u.id
+        WHERE u.openid = #{openid}
     </select>
 
     <insert id="insertPricingByEnergy" parameterType="site.ahzx.chazuo.domain.PO.PricingByEnergyPO">

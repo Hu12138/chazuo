@@ -1,3 +1,4 @@
+drop table if exists `device`;
 CREATE TABLE `device` (
                           `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                           `device_no` varchar(50) NOT NULL COMMENT '设备编号',
@@ -11,11 +12,11 @@ CREATE TABLE `device` (
                           UNIQUE KEY `uk_device_no` (`device_no`),
                           KEY `idx_pricing_standard_id` (`pricing_standard_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='设备表';
-
+drop table if exists `pricing_standard`;
 CREATE TABLE `pricing_standard` (
                                     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                                     `name` varchar(100) NOT NULL COMMENT '收费标准名称',
-                                    `type` enum('by_energy','by_time','by_amount') NOT NULL COMMENT '收费类型(按电量/按时长/按金额)',
+                                    `type` enum('BY_ENERGY','BY_TIME','BY_AMOUNT') NOT NULL COMMENT '收费类型(按电量/按时长/按金额)',
                                     `is_active` tinyint(1) DEFAULT '1' COMMENT '是否启用',
                                     `created_by` bigint NOT NULL COMMENT '创建人ID',
                                     `created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -24,6 +25,7 @@ CREATE TABLE `pricing_standard` (
                                     KEY `idx_type` (`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='收费标准基础表';
 
+drop table if exists `pricing_by_energy`;
 CREATE TABLE `pricing_by_energy` (
                                      `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                                      `standard_id` bigint NOT NULL COMMENT '关联收费标准ID（逻辑关联）',
@@ -37,6 +39,7 @@ CREATE TABLE `pricing_by_energy` (
                                      UNIQUE KEY `uk_standard_id` (`standard_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='按电量收费标准表';
 
+drop table if exists `pricing_by_time`;
 CREATE TABLE `pricing_by_time` (
                                    `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                                    `standard_id` bigint NOT NULL COMMENT '关联收费标准ID（逻辑关联）',
@@ -50,6 +53,7 @@ CREATE TABLE `pricing_by_time` (
                                    UNIQUE KEY `uk_standard_id` (`standard_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='按充电时长收费标准表';
 
+drop table if exists `pricing_by_amount`;
 CREATE TABLE `pricing_by_amount` (
                                      `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                                      `standard_id` bigint NOT NULL COMMENT '关联收费标准ID（逻辑关联）',

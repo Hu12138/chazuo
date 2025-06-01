@@ -11,7 +11,7 @@ public interface PricingStandardMapper {
     int updateById(PricingStandardPO pricingStandard);
     int deleteById(Long id);
     PricingStandardPO selectById(Long id);
-    List<PricingStandardPO> selectList();
+    List<PricingStandardPO> selectList(String openid);
 
     int insertPricingByEnergy(PricingByEnergyPO pricingByEnergy);
     int insertPricingByTime(PricingByTimePO pricingByTime);

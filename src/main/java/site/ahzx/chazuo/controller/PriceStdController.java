@@ -86,7 +86,8 @@ public class PriceStdController {
     public R getPricingStandardList() {
         try {
             log.info("查询收费标准列表");
-            return R.ok("查询成功", pricingStandardService.getPricingStandardList());
+            String openid = userContext.getCurrentUser();
+            return R.ok("查询成功", pricingStandardService.getPricingStandardList(openid));
         } catch (Exception e) {
             log.error("查询收费标准列表失败", e);
             return R.fail("查询失败: " + e.getMessage());
