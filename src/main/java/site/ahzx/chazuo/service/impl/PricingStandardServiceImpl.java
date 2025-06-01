@@ -37,11 +37,13 @@ public class PricingStandardServiceImpl implements PricingStandardService {
     }
 
     @Override
-    public List<PricingStandardVO> getPricingStandardList(String openid) {
+    public com.github.pagehelper.PageInfo<PricingStandardVO> getPricingStandardList(String openid, Integer pageNum, Integer pageSize) {
+        com.github.pagehelper.PageHelper.startPage(pageNum, pageSize);
         List<PricingStandardPO> pos = pricingStandardMapper.selectList(openid);
-        return pos.stream()
+        List<PricingStandardVO> vos = pos.stream()
                 .map(this::convertToVO)
                 .collect(Collectors.toList());
+        return new com.github.pagehelper.PageInfo<>(vos);
     }
 
     @Override

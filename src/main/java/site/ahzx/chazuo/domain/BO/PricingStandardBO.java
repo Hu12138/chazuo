@@ -32,4 +32,8 @@ public class PricingStandardBO {
     
     // 公共字段
     private Long createdBy;
+    
+    // 分页字段
+    private Integer pageNum = 1;
+    private Integer pageSize = 10;
 }

@@ -9,5 +9,5 @@ public interface PricingStandardService {
     void updatePricingStandard(PricingStandardBO pricingStandardBO);
     void deletePricingStandard(Long id);
     PricingStandardVO getPricingStandardDetail(Long id);
-    List<PricingStandardVO> getPricingStandardList(String openid);
+    com.github.pagehelper.PageInfo<PricingStandardVO> getPricingStandardList(String openid, Integer pageNum, Integer pageSize);
 }

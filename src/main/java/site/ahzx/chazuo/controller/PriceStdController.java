@@ -1,6 +1,7 @@
 package site.ahzx.chazuo.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import site.ahzx.chazuo.aop.UserContext;
@@ -76,7 +77,7 @@ public class PriceStdController {
         }
     }
 
-    @GetMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public R deletePricingStandard(@PathVariable("id") Long id) {
         try {
             log.info("删除收费标准: {}", id);
@@ -101,11 +102,12 @@ public class PriceStdController {
     }
 
     @GetMapping("/list")
-    public R getPricingStandardList() {
+    public R getPricingStandardList(@RequestParam(defaultValue = "1") Integer pageNum,
+                                   @RequestParam(defaultValue = "10") Integer pageSize) {
         try {
-            log.info("查询收费标准列表");
+            log.info("查询收费标准列表，页码：{}，每页大小：{}", pageNum, pageSize);
             String openid = userContext.getCurrentUser();
-            return R.ok("查询成功", pricingStandardService.getPricingStandardList(openid));
+            return R.ok("查询成功", pricingStandardService.getPricingStandardList(openid, pageNum, pageSize));
         } catch (Exception e) {
             log.error("查询收费标准列表失败", e);
             return R.fail("查询失败: " + e.getMessage());
