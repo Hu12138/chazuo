@@ -8,12 +8,28 @@
             name,
             type,
             is_active,
-            created_by
+            created_by,
+            has_service_fee,
+            service_fee_per_unit,
+            energy_fee_per_unit,
+            time_unit,
+            time_per_yuan,
+            time_unit_per_yuan,
+            amount_time_unit,
+            amount_per_unit
         ) VALUES (
             #{name},
             #{type, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
             #{isActive},
-            #{createdBy}
+            #{createdBy},
+            #{hasServiceFee},
+            #{serviceFeePerUnit},
+            #{energyFeePerUnit},
+            #{timeUnit, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+            #{timePerYuan},
+            #{timeUnitPerYuan, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+            #{amountTimeUnit, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
+            #{amountPerUnit}
         )
     </insert>
 
@@ -52,49 +68,4 @@
         WHERE u.openid = #{openid}
     </select>
 
-    <insert id="insertPricingByEnergy" parameterType="site.ahzx.chazuo.domain.PO.PricingByEnergyPO">
-        INSERT INTO pricing_by_energy (
-            standard_id,
-            has_service_fee,
-            service_fee_per_unit,
-            energy_fee_per_unit,
-            created_by
-        ) VALUES (
-            #{standardId},
-            #{hasServiceFee},
-            #{serviceFeePerUnit},
-            #{energyFeePerUnit},
-            #{createdBy}
-        )
-    </insert>
-
-    <insert id="insertPricingByTime" parameterType="site.ahzx.chazuo.domain.PO.PricingByTimePO">
-        INSERT INTO pricing_by_time (
-            standard_id,
-            time_unit,
-            time_per_yuan,
-            time_unit_per_yuan,
-            created_by
-        ) VALUES (
-            #{standardId},
-            #{timeUnit, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
-            #{timePerYuan},
-            #{timeUnitPerYuan, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
-            #{createdBy}
-        )
-    </insert>
-
-    <insert id="insertPricingByAmount" parameterType="site.ahzx.chazuo.domain.PO.PricingByAmountPO">
-        INSERT INTO pricing_by_amount (
-            standard_id,
-            time_unit,
-            amount_per_unit,
-            created_by
-        ) VALUES (
-            #{standardId},
-            #{timeUnit, typeHandler=org.apache.ibatis.type.EnumTypeHandler},
-            #{amountPerUnit},
-            #{createdBy}
-        )
-    </insert>
 </mapper>

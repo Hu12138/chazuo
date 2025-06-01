@@ -13,7 +13,4 @@ public interface PricingStandardMapper {
     PricingStandardPO selectById(Long id);
     List<PricingStandardPO> selectList(String openid);
 
-    int insertPricingByEnergy(PricingByEnergyPO pricingByEnergy);
-    int insertPricingByTime(PricingByTimePO pricingByTime);
-    int insertPricingByAmount(PricingByAmountPO pricingByAmount);
 }

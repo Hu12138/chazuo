@@ -28,16 +28,34 @@ public class PriceStdController {
     public R addPricingStandard(@RequestBody PricingStandardBO pricingStandardBO) {
         try {
             log.info("新增收费标准: {}", pricingStandardBO);
-            // 从UserContext获取当前用户ID
             String openid = userContext.getCurrentUser();
-            // 查询用户ID
             Long userId = userService.getUserIdByOpenid(openid);
             if (userId == null) {
                 return R.fail("用户不存在");
             }
             pricingStandardBO.setCreatedBy(userId);
+            
+            // 验证收费类型和对应字段
+            switch(pricingStandardBO.getType()) {
+                case BY_ENERGY:
+                    if (pricingStandardBO.getEnergyFeePerUnit() == null) {
+                        return R.fail("按电量收费必须设置电费单价");
+                    }
+                    break;
+                case BY_TIME:
+                    if (pricingStandardBO.getTimePerYuan() == null || 
+                        pricingStandardBO.getTimeUnit() == null) {
+                        return R.fail("按时长收费必须设置时间和单位");
+                    }
+                    break;
+                case BY_AMOUNT:
+                    if (pricingStandardBO.getAmountPerUnit() == null || 
+                        pricingStandardBO.getTimeUnit() == null) {
+                        return R.fail("按金额收费必须设置金额和单位");
+                    }
+                    break;
+            }
 
-            log.debug("price standard: {}", pricingStandardBO);
             pricingStandardService.addPricingStandard(pricingStandardBO);
             return R.ok("收费标准添加成功");
         } catch (Exception e) {
@@ -59,7 +77,7 @@ public class PriceStdController {
     }
 
     @GetMapping("/delete/{id}")
-    public R deletePricingStandard(@PathVariable Long id) {
+    public R deletePricingStandard(@PathVariable("id") Long id) {
         try {
             log.info("删除收费标准: {}", id);
             pricingStandardService.deletePricingStandard(id);
@@ -71,7 +89,7 @@ public class PriceStdController {
     }
 
     @GetMapping("/detail/{id}")
-    public R getPricingStandardDetail(@PathVariable Long id) {
+    public R getPricingStandardDetail(@PathVariable("id") Long id) {
         try {
             log.info("查询收费标准详情: {}", id);
             PricingStandardVO vo = pricingStandardService.getPricingStandardDetail(id);

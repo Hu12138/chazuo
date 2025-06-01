@@ -46,42 +46,10 @@ public class PricingStandardServiceImpl implements PricingStandardService {
 
     @Override
     public void addPricingStandard(PricingStandardBO bo) {
-        // 1. 保存收费标准基本信息
+        // 转换并保存所有字段到合并后的PO
         PricingStandardPO standardPO = convertToPO(bo);
-        log.debug("standardPO: " + standardPO);
+        log.debug("standardPO: {}", standardPO);
         pricingStandardMapper.insert(standardPO);
-        
-        // 2. 根据收费类型保存具体定价规则
-        switch(bo.getType()) {
-            case BY_ENERGY:
-                PricingByEnergyPO energyPO = new PricingByEnergyPO();
-                energyPO.setStandardId(standardPO.getId());
-                energyPO.setHasServiceFee(bo.getHasServiceFee());
-                energyPO.setServiceFeePerUnit(bo.getServiceFeePerUnit());
-                energyPO.setEnergyFeePerUnit(bo.getEnergyFeePerUnit());
-                energyPO.setCreatedBy(bo.getCreatedBy());
-                pricingStandardMapper.insertPricingByEnergy(energyPO);
-                break;
-                
-            case BY_TIME:
-                PricingByTimePO timePO = new PricingByTimePO();
-                timePO.setStandardId(standardPO.getId());
-                timePO.setTimeUnit(bo.getTimeUnit());
-                timePO.setTimePerYuan(bo.getTimePerYuan());
-                timePO.setTimeUnitPerYuan(bo.getTimeUnitPerYuan());
-                timePO.setCreatedBy(bo.getCreatedBy());
-                pricingStandardMapper.insertPricingByTime(timePO);
-                break;
-                
-            case BY_AMOUNT:
-                PricingByAmountPO amountPO = new PricingByAmountPO();
-                amountPO.setStandardId(standardPO.getId());
-                amountPO.setTimeUnit(bo.getTimeUnit());
-                amountPO.setAmountPerUnit(bo.getAmountPerUnit());
-                amountPO.setCreatedBy(bo.getCreatedBy());
-                pricingStandardMapper.insertPricingByAmount(amountPO);
-                break;
-        }
     }
 
     private PricingStandardPO convertToPO(PricingStandardBO bo) {
@@ -90,6 +58,24 @@ public class PricingStandardServiceImpl implements PricingStandardService {
         po.setType(bo.getType());
         po.setIsActive(bo.getIsActive());
         po.setCreatedBy(bo.getCreatedBy());
+        
+        // 设置收费类型相关字段
+        switch(bo.getType()) {
+            case BY_ENERGY:
+                po.setHasServiceFee(bo.getHasServiceFee());
+                po.setServiceFeePerUnit(bo.getServiceFeePerUnit());
+                po.setEnergyFeePerUnit(bo.getEnergyFeePerUnit());
+                break;
+            case BY_TIME:
+                po.setTimeUnit(bo.getTimeUnit());
+                po.setTimePerYuan(bo.getTimePerYuan());
+                po.setTimeUnitPerYuan(bo.getTimeUnitPerYuan());
+                break;
+            case BY_AMOUNT:
+                po.setAmountTimeUnit(bo.getTimeUnit());
+                po.setAmountPerUnit(bo.getAmountPerUnit());
+                break;
+        }
         return po;
     }
 
@@ -99,6 +85,17 @@ public class PricingStandardServiceImpl implements PricingStandardService {
         vo.setName(po.getName());
         vo.setType(po.getType());
         vo.setIsActive(po.getIsActive());
+        
+        // 设置收费类型相关字段
+        vo.setHasServiceFee(po.getHasServiceFee());
+        vo.setServiceFeePerUnit(po.getServiceFeePerUnit());
+        vo.setEnergyFeePerUnit(po.getEnergyFeePerUnit());
+        vo.setTimeUnit(po.getTimeUnit());
+        vo.setTimePerYuan(po.getTimePerYuan());
+        vo.setTimeUnitPerYuan(po.getTimeUnitPerYuan());
+        vo.setAmountTimeUnit(po.getAmountTimeUnit());
+        vo.setAmountPerUnit(po.getAmountPerUnit());
+        
         return vo;
     }
 

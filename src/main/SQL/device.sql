@@ -16,7 +16,7 @@ drop table if exists `pricing_standard`;
 CREATE TABLE `pricing_standard` (
                                     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键ID',
                                     `name` varchar(100) NOT NULL COMMENT '收费标准名称',
-                                    `type` enum('by_energy','by_time','by_amount') NOT NULL COMMENT '收费类型(按电量/按时长/按金额)',
+                                    `type` enum('BY_ENERGY','BY_TIME','BY_AMOUNT') NOT NULL COMMENT '收费类型(按电量/按时长/按金额)',
 
     -- 通用字段
                                     `is_active` tinyint(1) DEFAULT '1' COMMENT '是否启用',
@@ -30,12 +30,12 @@ CREATE TABLE `pricing_standard` (
                                     `energy_fee_per_unit` decimal(10,4) DEFAULT NULL COMMENT '电费单价(元/度)(按电量)',
 
     -- 按充电时长收费专用字段
-                                    `time_unit` enum('minute','hour') DEFAULT NULL COMMENT '时间单位(分钟/小时)(按时长)',
+                                    `time_unit` enum('MINUTE','HOUR') DEFAULT NULL COMMENT '时间单位(分钟/小时)(按时长)',
                                     `time_per_yuan` int DEFAULT NULL COMMENT '每元充多少时间(按时长)',
-                                    `time_unit_per_yuan` enum('minute','hour') DEFAULT NULL COMMENT '时间单位(与time_per_yuan配合)(按时长)',
+                                    `time_unit_per_yuan` enum('MINUTE','HOUR') DEFAULT NULL COMMENT '时间单位(与time_per_yuan配合)(按时长)',
 
     -- 按金额充电专用字段
-                                    `amount_time_unit` enum('minute','hour') DEFAULT NULL COMMENT '时间单位(分钟/小时)(按金额)',
+                                    `amount_time_unit` enum('MINUTE','HOUR') DEFAULT NULL COMMENT '时间单位(分钟/小时)(按金额)',
                                     `amount_per_unit` decimal(10,4) DEFAULT NULL COMMENT '每单位时间价格(元)(按金额)',
 
                                     PRIMARY KEY (`id`),
