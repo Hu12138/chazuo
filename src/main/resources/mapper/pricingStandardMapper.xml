@@ -45,9 +45,10 @@
     </select>
 
     <select id="selectList" resultMap="pricingStandardResultMap">
-        SELECT ps.* 
+        SELECT *
         FROM pricing_standard ps
         JOIN user u ON ps.created_by = u.id
+
         WHERE u.openid = #{openid}
     </select>
 
