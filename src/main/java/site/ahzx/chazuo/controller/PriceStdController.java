@@ -30,13 +30,12 @@ public class PriceStdController {
             log.info("新增收费标准: {}", pricingStandardBO);
             // 从UserContext获取当前用户ID
             String openid = userContext.getCurrentUser();
-            // 查询用户信息
-            Integer userId = userService.countOpenId(openid);
-            if (userId == null || userId == 0) {
+            // 查询用户ID
+            Long userId = userService.getUserIdByOpenid(openid);
+            if (userId == null) {
                 return R.fail("用户不存在");
             }
-
-            pricingStandardBO.setCreatedBy(userId.longValue());
+            pricingStandardBO.setCreatedBy(userId);
 
             log.debug("price standard: {}", pricingStandardBO);
             pricingStandardService.addPricingStandard(pricingStandardBO);

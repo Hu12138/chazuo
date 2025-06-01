@@ -83,7 +83,11 @@
         FROM user
     </select>
     <select id="countOpenId" resultType="java.lang.Integer">
-        SELECT count(*) FROM user WHERE openid = #{openid}
+        SELECT COUNT(*) FROM user WHERE openid = #{openId}
+    </select>
+    
+    <select id="getUserIdByOpenid" resultType="java.lang.Long">
+        SELECT id FROM user WHERE openid = #{openid} LIMIT 1
     </select>
 
 

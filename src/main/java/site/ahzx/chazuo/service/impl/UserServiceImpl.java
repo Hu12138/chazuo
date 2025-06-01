@@ -22,4 +22,9 @@ public class UserServiceImpl implements UserService {
     public Integer countOpenId(String openId) {
         return userMapper.countOpenId(openId);
     }
+
+    @Override
+    public Long getUserIdByOpenid(String openid) {
+        return userMapper.getUserIdByOpenid(openid);
+    }
 }
