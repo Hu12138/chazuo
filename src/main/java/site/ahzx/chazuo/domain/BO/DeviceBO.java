@@ -6,6 +6,8 @@ import lombok.Data;
 
 @Data
 public class DeviceBO {
+    private Long id;
+    
     @NotBlank(message = "设备编号不能为空")
     private String deviceNo;
     
@@ -16,4 +18,5 @@ public class DeviceBO {
     private Long pricingStandardId;
     
     private Integer status = 1;
+    private Long createdBy;
 }

@@ -3,9 +3,11 @@ package site.ahzx.chazuo.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import site.ahzx.chazuo.aop.UserContext;
 import site.ahzx.chazuo.domain.BO.DeviceBO;
 import site.ahzx.chazuo.domain.VO.DeviceVO;
 import site.ahzx.chazuo.service.DeviceService;
+import site.ahzx.chazuo.service.UserService;
 import site.ahzx.chazuo.util.R;
 
 @RestController
@@ -15,11 +17,23 @@ public class DeviceController {
 
     @Autowired
     private DeviceService deviceService;
+    
+    @Autowired
+    private UserContext userContext;
+    
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/add")
     public R addDevice(@RequestBody DeviceBO deviceBO) {
         try {
             log.info("新增设备: {}", deviceBO);
+            String openid = userContext.getCurrentUser();
+            Long userId = userService.getUserIdByOpenid(openid);
+            if (userId == null) {
+                return R.fail("用户不存在");
+            }
+            deviceBO.setCreatedBy(userId);
             deviceService.addDevice(deviceBO);
             return R.ok("设备添加成功");
         } catch (Exception e) {
@@ -40,7 +54,7 @@ public class DeviceController {
         }
     }
 
-    @GetMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public R deleteDevice(@PathVariable Long id) {
         try {
             log.info("删除设备: {}", id);

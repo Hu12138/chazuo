@@ -5,17 +5,21 @@
 
     <insert id="insert" parameterType="site.ahzx.chazuo.domain.PO.DevicePO" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO device (
-            device_no, 
-            device_name, 
-            pricing_standard_id, 
-            status, 
-            created_by
+            device_no,
+            device_name,
+            pricing_standard_id,
+            status,
+            created_by,
+            created_at,
+            updated_at
         ) VALUES (
             #{deviceNo},
             #{deviceName},
             #{pricingStandardId},
             #{status},
-            #{createdBy}
+            #{createdBy},
+            NOW(),
+            NOW()
         )
     </insert>
 
