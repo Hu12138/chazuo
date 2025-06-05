@@ -29,7 +29,8 @@
             device_no = #{deviceNo},
             device_name = #{deviceName},
             pricing_standard_id = #{pricingStandardId},
-            status = #{status}
+            status = #{status},
+            updated_at = NOW()
         WHERE id = #{id}
     </update>
 
@@ -62,5 +63,20 @@
             created_at as createdAt,
             updated_at as updatedAt
         FROM device
+    </select>
+
+    <select id="selectListByOpenid" parameterType="string" resultType="site.ahzx.chazuo.domain.PO.DevicePO">
+        SELECT 
+            d.id,
+            d.device_no as deviceNo,
+            d.device_name as deviceName,
+            d.pricing_standard_id as pricingStandardId,
+            d.status,
+            d.created_by as createdBy,
+            d.created_at as createdAt,
+            d.updated_at as updatedAt
+        FROM device d
+        JOIN user u ON d.created_by = u.id
+        WHERE u.openid = #{openid}
     </select>
 </mapper>

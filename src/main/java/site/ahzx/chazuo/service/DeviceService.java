@@ -2,6 +2,7 @@ package site.ahzx.chazuo.service;
 
 import site.ahzx.chazuo.domain.BO.DeviceBO;
 import site.ahzx.chazuo.domain.VO.DeviceVO;
+import com.github.pagehelper.PageInfo;
 import java.util.List;
 
 public interface DeviceService {
@@ -9,5 +10,5 @@ public interface DeviceService {
     void updateDevice(DeviceBO deviceBO);
     void deleteDevice(Long id);
     DeviceVO getDeviceDetail(Long id);
-    List<DeviceVO> getDeviceList();
+    PageInfo<DeviceVO> getDeviceList(String openid, Integer pageNum, Integer pageSize);
 }

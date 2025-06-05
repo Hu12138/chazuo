@@ -1,5 +1,7 @@
 package site.ahzx.chazuo.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import site.ahzx.chazuo.domain.BO.DeviceBO;
@@ -54,11 +56,13 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public List<DeviceVO> getDeviceList() {
-        List<DevicePO> devicePOs = deviceMapper.selectList();
-        return devicePOs.stream()
+    public PageInfo<DeviceVO> getDeviceList(String openid, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        List<DevicePO> devicePOs = deviceMapper.selectListByOpenid(openid);
+        List<DeviceVO> deviceVOs = devicePOs.stream()
                 .map(this::convertToVO)
                 .collect(Collectors.toList());
+        return new PageInfo<>(deviceVOs);
     }
 
     private DeviceVO convertToVO(DevicePO devicePO) {

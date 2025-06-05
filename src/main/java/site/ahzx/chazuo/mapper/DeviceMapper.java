@@ -1,6 +1,7 @@
 package site.ahzx.chazuo.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import site.ahzx.chazuo.domain.PO.DevicePO;
 import java.util.List;
 
@@ -11,4 +12,5 @@ public interface DeviceMapper {
     int deleteById(Long id);
     DevicePO selectById(Long id);
     List<DevicePO> selectList();
+    List<DevicePO> selectListByOpenid(@Param("openid") String openid);
 }
