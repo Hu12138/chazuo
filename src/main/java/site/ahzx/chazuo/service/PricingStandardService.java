@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface PricingStandardService {
     void addPricingStandard(PricingStandardBO pricingStandardBO);
-    void updatePricingStandard(PricingStandardBO pricingStandardBO);
-    void deletePricingStandard(Long id);
+    int updatePricingStandard(PricingStandardBO pricingStandardBO);
+    int deletePricingStandard(Long id);
     PricingStandardVO getPricingStandardDetail(Long id);
-    com.github.pagehelper.PageInfo<PricingStandardVO> getPricingStandardList(String openid, Integer pageNum, Integer pageSize);
+    com.github.pagehelper.PageInfo<PricingStandardVO> getPricingStandardList(String phone, Integer pageNum, Integer pageSize);
 }

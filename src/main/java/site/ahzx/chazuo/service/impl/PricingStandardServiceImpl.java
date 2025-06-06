@@ -20,26 +20,29 @@ public class PricingStandardServiceImpl implements PricingStandardService {
     private final PricingStandardMapper pricingStandardMapper;
 
     @Override
-    public void updatePricingStandard(PricingStandardBO pricingStandardBO) {
+    public int updatePricingStandard(PricingStandardBO pricingStandardBO) {
         PricingStandardPO po = convertToPO(pricingStandardBO);
-        pricingStandardMapper.updateById(po);
+        return pricingStandardMapper.updateById(po);
     }
 
     @Override
-    public void deletePricingStandard(Long id) {
-        pricingStandardMapper.deleteById(id);
+    public int deletePricingStandard(Long id) {
+        return pricingStandardMapper.deleteById(id);
     }
 
     @Override
     public PricingStandardVO getPricingStandardDetail(Long id) {
         PricingStandardPO po = pricingStandardMapper.selectById(id);
+        if (po == null) {
+            return null;
+        }
         return convertToVO(po);
     }
 
     @Override
-    public com.github.pagehelper.PageInfo<PricingStandardVO> getPricingStandardList(String openid, Integer pageNum, Integer pageSize) {
+    public com.github.pagehelper.PageInfo<PricingStandardVO> getPricingStandardList(String phone, Integer pageNum, Integer pageSize) {
         com.github.pagehelper.PageHelper.startPage(pageNum, pageSize);
-        List<PricingStandardPO> pos = pricingStandardMapper.selectList(openid);
+        List<PricingStandardPO> pos = pricingStandardMapper.selectList(phone);
         List<PricingStandardVO> vos = pos.stream()
                 .map(this::convertToVO)
                 .collect(Collectors.toList());

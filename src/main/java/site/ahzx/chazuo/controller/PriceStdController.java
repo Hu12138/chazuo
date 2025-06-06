@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import site.ahzx.chazuo.aop.UserContext;
 import site.ahzx.chazuo.domain.BO.PricingStandardBO;
+import site.ahzx.chazuo.domain.PO.UserPO;
 import site.ahzx.chazuo.domain.VO.*;
 import site.ahzx.chazuo.service.PricingStandardService;
 import site.ahzx.chazuo.service.UserService;
@@ -29,12 +30,13 @@ public class PriceStdController {
     public R addPricingStandard(@RequestBody PricingStandardBO pricingStandardBO) {
         try {
             log.info("新增收费标准: {}", pricingStandardBO);
-            String openid = userContext.getCurrentUser();
-            Long userId = userService.getUserIdByOpenid(openid);
-            if (userId == null) {
+            String user = userContext.getCurrentUser();
+            UserPO userPO = userService.getUserByPhone(user);
+
+            if (userPO == null) {
                 return R.fail("用户不存在");
             }
-            pricingStandardBO.setCreatedBy(userId);
+            pricingStandardBO.setCreatedBy(Long.valueOf(userPO.getId()));
             
             // 验证收费类型和对应字段
             switch(pricingStandardBO.getType()) {
@@ -69,7 +71,9 @@ public class PriceStdController {
     public R updatePricingStandard(@RequestBody PricingStandardBO pricingStandardBO) {
         try {
             log.info("更新收费标准: {}", pricingStandardBO);
-            pricingStandardService.updatePricingStandard(pricingStandardBO);
+            if (pricingStandardService.updatePricingStandard(pricingStandardBO) == 0) {
+                return R.fail("收费标准不存在");
+            };
             return R.ok("收费标准更新成功");
         } catch (Exception e) {
             log.error("更新收费标准失败", e);
@@ -81,7 +85,9 @@ public class PriceStdController {
     public R deletePricingStandard(@PathVariable("id") Long id) {
         try {
             log.info("删除收费标准: {}", id);
-            pricingStandardService.deletePricingStandard(id);
+            if (pricingStandardService.deletePricingStandard(id) == 0) {
+                return R.fail("收费标准不存在");
+            };
             return R.ok("收费标准删除成功");
         } catch (Exception e) {
             log.error("删除收费标准失败", e);
@@ -94,6 +100,9 @@ public class PriceStdController {
         try {
             log.info("查询收费标准详情: {}", id);
             PricingStandardVO vo = pricingStandardService.getPricingStandardDetail(id);
+            if (vo == null) {
+                return R.fail("收费标准不存在");
+            }
             return R.ok("查询成功", vo);
         } catch (Exception e) {
             log.error("查询收费标准详情失败", e);
@@ -106,8 +115,8 @@ public class PriceStdController {
                                    @RequestParam(defaultValue = "10") Integer pageSize) {
         try {
             log.info("查询收费标准列表，页码：{}，每页大小：{}", pageNum, pageSize);
-            String openid = userContext.getCurrentUser();
-            return R.ok("查询成功", pricingStandardService.getPricingStandardList(openid, pageNum, pageSize));
+            String phone = userContext.getCurrentUser();
+            return R.ok("查询成功", pricingStandardService.getPricingStandardList(phone, pageNum, pageSize));
         } catch (Exception e) {
             log.error("查询收费标准列表失败", e);
             return R.fail("查询失败: " + e.getMessage());

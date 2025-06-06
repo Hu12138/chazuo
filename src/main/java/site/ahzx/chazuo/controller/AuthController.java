@@ -115,9 +115,12 @@ public class AuthController {
     @PostMapping("/login")
     public R login(@RequestBody @Validated LoginBO login) {
         // 1. 根据手机号密码查找用户
-        UserPO user = userService.getUserByPhoneAndPassword(login);
+        UserPO user = userService.getUserByPhone(login.getPhone());
         if (user == null) {
-            return R.fail("用户名或密码错误");
+            return R.fail("用户名不存在");
+        }
+        if (!user.getPassword().equals(login.getPassword())) {
+            return R.fail("密码错误");
         }
         // 2.根据用户找到角色
 //        String role = userService.getRoleByUserId(Long.valueOf(user.getId()));

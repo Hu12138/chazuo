@@ -30,9 +30,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserPO getUserByPhoneAndPassword(LoginBO loginBO) {
+    public UserPO getUserByPhone(String phone) {
 
-        return userMapper.getUserByPhoneAndPassword(loginBO);
+        return userMapper.getUserByPhone(phone);
     }
 
     @Override

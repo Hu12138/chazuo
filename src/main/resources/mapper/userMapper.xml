@@ -89,8 +89,8 @@
     <select id="getUserIdByOpenid" resultType="java.lang.Long">
         SELECT id FROM user WHERE openid = #{openid} LIMIT 1
     </select>
-    <select id="getUserByPhoneAndPassword" resultType="site.ahzx.chazuo.domain.PO.UserPO">
-        SELECT * FROM user WHERE phone = #{phone} AND password = #{password}
+    <select id="getUserByPhone" resultType="site.ahzx.chazuo.domain.PO.UserPO">
+        SELECT * FROM user WHERE phone = #{phone}
     </select>
     <select id="getRoleByUserId" resultType="java.lang.String">
         SELECT name FROM user WHERE id = #{userId}

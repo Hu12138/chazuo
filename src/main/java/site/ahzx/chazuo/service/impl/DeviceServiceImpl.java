@@ -33,7 +33,7 @@ public class DeviceServiceImpl implements DeviceService {
     }
 
     @Override
-    public void updateDevice(DeviceBO deviceBO) {
+    public int updateDevice(DeviceBO deviceBO) {
         DevicePO devicePO = new DevicePO();
         devicePO.setId(deviceBO.getId());
         devicePO.setDeviceNo(deviceBO.getDeviceNo());
@@ -41,24 +41,30 @@ public class DeviceServiceImpl implements DeviceService {
         devicePO.setPricingStandardId(deviceBO.getPricingStandardId());
         devicePO.setStatus(deviceBO.getStatus());
         devicePO.setUpdatedAt(new Date());
-        deviceMapper.updateById(devicePO);
+        return deviceMapper.updateById(devicePO);
     }
 
     @Override
-    public void deleteDevice(Long id) {
-        deviceMapper.deleteById(id);
+    public int deleteDevice(Long id) {
+        return deviceMapper.deleteById(id);
     }
 
     @Override
     public DeviceVO getDeviceDetail(Long id) {
         DevicePO devicePO = deviceMapper.selectById(id);
+        if (devicePO == null) {
+            return null;
+        }
         return convertToVO(devicePO);
     }
 
     @Override
-    public PageInfo<DeviceVO> getDeviceList(String openid, Integer pageNum, Integer pageSize) {
+    public PageInfo<DeviceVO> getDeviceList(String phone, Integer pageNum, Integer pageSize) {
         PageHelper.startPage(pageNum, pageSize);
-        List<DevicePO> devicePOs = deviceMapper.selectListByOpenid(openid);
+        List<DevicePO> devicePOs = deviceMapper.selectListByOpenid(phone);
+        if (devicePOs == null) {
+            return null;
+        }
         List<DeviceVO> deviceVOs = devicePOs.stream()
                 .map(this::convertToVO)
                 .collect(Collectors.toList());

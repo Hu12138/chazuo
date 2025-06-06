@@ -43,7 +43,7 @@
     </update>
 
     <delete id="deleteById" parameterType="long">
-        DELETE FROM pricing_standard WHERE id = #{id}
+        DELETE FROM pricing_standard WHERE id = #{id} and created_by = #{createdBy}
     </delete>
 
     <resultMap id="pricingStandardResultMap" type="site.ahzx.chazuo.domain.PO.PricingStandardPO">
@@ -64,7 +64,7 @@
         SELECT *
         FROM pricing_standard ps
         JOIN user u ON ps.created_by = u.id
-        WHERE u.openid = #{openid}
+        WHERE u.phone = #{phone}
     </select>
 
 </mapper>

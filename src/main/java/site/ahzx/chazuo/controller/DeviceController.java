@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import site.ahzx.chazuo.aop.UserContext;
 import site.ahzx.chazuo.domain.BO.DeviceBO;
+import site.ahzx.chazuo.domain.PO.UserPO;
 import site.ahzx.chazuo.domain.VO.DeviceVO;
 import site.ahzx.chazuo.service.DeviceService;
 import site.ahzx.chazuo.service.UserService;
@@ -31,12 +32,12 @@ public class DeviceController {
     public R addDevice(@RequestBody DeviceBO deviceBO) {
         try {
             log.info("新增设备: {}", deviceBO);
-            String openid = userContext.getCurrentUser();
-            Long userId = userService.getUserIdByOpenid(openid);
-            if (userId == null) {
+            String phone = userContext.getCurrentUser();
+            UserPO user = userService.getUserByPhone(phone);
+            if (user == null) {
                 return R.fail("用户不存在");
             }
-            deviceBO.setCreatedBy(userId);
+            deviceBO.setCreatedBy(Long.valueOf(user.getId()));
             deviceService.addDevice(deviceBO);
             return R.ok("设备添加成功");
         } catch (Exception e) {
@@ -49,7 +50,9 @@ public class DeviceController {
     public R updateDevice(@RequestBody DeviceBO deviceBO) {
         try {
             log.info("更新设备: {}", deviceBO);
-            deviceService.updateDevice(deviceBO);
+            if (deviceService.updateDevice(deviceBO) == 0) {
+                return R.fail("设备不存在");
+            }
             return R.ok("设备更新成功");
         } catch (Exception e) {
             log.error("更新设备失败", e);
@@ -61,7 +64,9 @@ public class DeviceController {
     public R deleteDevice(@PathVariable Long id) {
         try {
             log.info("删除设备: {}", id);
-            deviceService.deleteDevice(id);
+            if (deviceService.deleteDevice(id) == 0) {
+                return R.fail("设备不存在");
+            };
             return R.ok("设备删除成功");
         } catch (Exception e) {
             log.error("删除设备失败", e);
@@ -74,6 +79,9 @@ public class DeviceController {
         try {
             log.info("查询设备详情: {}", id);
             DeviceVO deviceVO = deviceService.getDeviceDetail(id);
+            if (deviceVO == null) {
+                return R.fail("设备不存在");
+            }
             return R.ok("查询成功", deviceVO);
         } catch (Exception e) {
             log.error("查询设备详情失败", e);
@@ -86,8 +94,8 @@ public class DeviceController {
                           @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize) {
         try {
             log.info("查询设备列表，页码：{}，每页大小：{}", pageNum, pageSize);
-            String openid = userContext.getCurrentUser();
-            PageInfo<DeviceVO> pageInfo = deviceService.getDeviceList(openid, pageNum, pageSize);
+            String phone = userContext.getCurrentUser();
+            PageInfo<DeviceVO> pageInfo = deviceService.getDeviceList(phone, pageNum, pageSize);
             Map<String, Object> result = new HashMap<>();
             result.put("total", pageInfo.getTotal());
             result.put("list", pageInfo.getList());

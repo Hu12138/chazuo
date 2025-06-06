@@ -1,12 +1,16 @@
 package site.ahzx.chazuo.domain.PO;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import site.ahzx.chazuo.domain.enums.PricingTypeEnum;
 import site.ahzx.chazuo.domain.enums.TimeUnitEnum;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PricingStandardPO {
     private Long id;
     private String name;
