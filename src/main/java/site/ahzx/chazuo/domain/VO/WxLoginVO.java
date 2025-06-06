@@ -6,4 +6,5 @@ import lombok.Data;
 public class WxLoginVO {
     private String openid;
     private String token;
+    private String role;
 }

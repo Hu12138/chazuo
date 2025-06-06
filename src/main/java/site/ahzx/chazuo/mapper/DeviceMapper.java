@@ -13,4 +13,5 @@ public interface DeviceMapper {
     DevicePO selectById(Long id);
     List<DevicePO> selectList();
     List<DevicePO> selectListByOpenid(@Param("openid") String openid);
+
 }

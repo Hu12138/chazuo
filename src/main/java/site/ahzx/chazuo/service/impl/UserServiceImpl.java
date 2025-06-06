@@ -2,6 +2,7 @@ package site.ahzx.chazuo.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import site.ahzx.chazuo.domain.BO.LoginBO;
 import site.ahzx.chazuo.domain.PO.UserPO;
 import site.ahzx.chazuo.mapper.UserMapper;
 import site.ahzx.chazuo.service.UserService;
@@ -27,4 +28,17 @@ public class UserServiceImpl implements UserService {
     public Long getUserIdByOpenid(String openid) {
         return userMapper.getUserIdByOpenid(openid);
     }
+
+    @Override
+    public UserPO getUserByPhoneAndPassword(LoginBO loginBO) {
+
+        return userMapper.getUserByPhoneAndPassword(loginBO);
+    }
+
+    @Override
+    public String getRoleByUserId(Long userId) {
+        return userMapper.getRoleByUserId(userId);
+    }
+
+
 }

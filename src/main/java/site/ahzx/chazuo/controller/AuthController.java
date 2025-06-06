@@ -10,14 +10,17 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import site.ahzx.chazuo.aop.UserContext;
+import site.ahzx.chazuo.domain.BO.LoginBO;
 import site.ahzx.chazuo.domain.BO.WxLogin;
 import site.ahzx.chazuo.domain.PO.UserPO;
+import site.ahzx.chazuo.domain.VO.LoginVO;
 import site.ahzx.chazuo.domain.VO.WxLoginVO;
 import site.ahzx.chazuo.mapper.UserMapper;
 import site.ahzx.chazuo.service.UserService;
 import site.ahzx.chazuo.util.JwtTokenUtil;
 import site.ahzx.chazuo.util.R;
 
+import java.util.Collections;
 import java.util.Map;
 
 @RestController
@@ -86,10 +89,13 @@ public class AuthController {
 
                     // 可进一步处理 openid，例如查询数据库或创建用户等
             openid = "test";
-            String token = jwtTokenUtil.generateToken(openid, null);
+            // 微信登录写死角色为普通用户
+            String role = "common";
+            String token = jwtTokenUtil.generateToken(openid, Collections.singletonList(role));
             WxLoginVO  wxLoginVO = new WxLoginVO();
             wxLoginVO.setToken(token);
             wxLoginVO.setOpenid(openid);
+            wxLoginVO.setRole(role);
 
 
             Integer cnt = userService.countOpenId(openid);
@@ -104,5 +110,27 @@ public class AuthController {
             log.error("调用微信 jscode2session 接口失败", e);
             return R.fail("微信登录异常：" + e.getMessage());
         }
+    }
+
+    @PostMapping("/login")
+    public R login(@RequestBody @Validated LoginBO login) {
+        // 1. 根据手机号密码查找用户
+        UserPO user = userService.getUserByPhoneAndPassword(login);
+        if (user == null) {
+            return R.fail("用户名或密码错误");
+        }
+        // 2.根据用户找到角色
+//        String role = userService.getRoleByUserId(Long.valueOf(user.getId()));
+        // 手机号登录的通通写死成管理员账户
+        String role = "admin";
+
+        // 3.生成 token
+        String token = jwtTokenUtil.generateToken(user.getPhone(), Collections.singletonList(role));
+
+        LoginVO loginVO = new LoginVO();
+        loginVO.setToken(token);
+        loginVO.setRole(role);
+        loginVO.setPhone(user.getPhone());
+        return R.ok("登录成功", loginVO);
     }
 }

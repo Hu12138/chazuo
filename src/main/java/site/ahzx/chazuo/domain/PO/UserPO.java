@@ -16,5 +16,6 @@ public class UserPO {
     private String sessionKey;
     private String nickname;
     private String phone;
+    private String password;
     private Date createdTime;
 }
