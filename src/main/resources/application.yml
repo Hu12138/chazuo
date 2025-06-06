@@ -30,6 +30,15 @@ wx:
   app-id: wxd224c8ebd820134f
   app-secret: 00312b240ea42800e597079f0c42f71c
 
+sms:
+  app-key: 204893391
+  app-secret: sKksgWZcbesUF75V4E9NRJw6OhK6NTGv
+  app-code: 792dbe5007444befae8aef51b8c6c5b4
+  template_id: CST_ptdie100
+  host: https://dfsns.market.alicloudapi.com
+  path: /data/send_sms
+  methos: POST
+
 
 jwt:
   secret: yuzhouwudichaojidashuaibihuxuefengshiye # 请替换为实际的JWT密钥
