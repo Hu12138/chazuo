@@ -2,7 +2,6 @@ package site.ahzx.chazuo.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import site.ahzx.chazuo.domain.BO.LoginBO;
 import site.ahzx.chazuo.domain.PO.UserPO;
 import site.ahzx.chazuo.mapper.UserMapper;
 import site.ahzx.chazuo.service.UserService;
@@ -14,9 +13,9 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
 
     @Override
-    public Integer insertUser(UserPO user) {
+    public void insertUser(UserPO user) {
 
-        return userMapper.insertUser(user);
+        userMapper.insertUser(user);
     }
 
     @Override

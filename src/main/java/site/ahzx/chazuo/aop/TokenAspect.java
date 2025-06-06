@@ -36,6 +36,7 @@ public class TokenAspect {
     // 排除切点：匹配排除的路径
     @Pointcut("execution(* site.ahzx.chazuo.controller.AuthController.wxlogin(..)) || " +
             "execution(* site.ahzx.chazuo.controller.AuthController.register(..)) || " +
+            "execution(* site.ahzx.chazuo.controller.AuthController.sendCode(..)) || " +
             " execution(* site.ahzx.chazuo.controller.AuthController.login(..))")
     public void excludedPointcut() {}
 
