@@ -22,6 +22,7 @@ import site.ahzx.chazuo.service.UserService;
 import site.ahzx.chazuo.domain.CodeInfo;
 import site.ahzx.chazuo.util.JwtTokenUtil;
 import site.ahzx.chazuo.util.R;
+import site.ahzx.chazuo.util.SMSCodeUtil;
 
 import java.util.Collections;
 import java.util.Map;
@@ -49,11 +50,13 @@ public class AuthController {
     private final ObjectMapper objectMapper;
 
     @Autowired
-    private  UserService userService ;
+    private UserService userService;
     @Autowired
     private ConfigurationPropertiesAutoConfiguration configurationPropertiesAutoConfiguration;
     @Autowired
     private UserContext userContext;
+    @Autowired
+    private SMSCodeUtil smsCodeUtil;
     @Autowired
     public AuthController(JwtTokenUtil jwtTokenUtil, RestTemplate restTemplate, ObjectMapper objectMapper, UserMapper userMapper) {
         this.jwtTokenUtil = jwtTokenUtil;
@@ -126,12 +129,20 @@ public class AuthController {
     public R sendCode(@RequestBody SendCodeBO sendCodeBO) {
         String phone = sendCodeBO.getPhone();
         log.debug("phone is {}", phone);
-        // 模拟发送验证码
+        
+        // 生成验证码
         String code = String.format("%06d", random.nextInt(999999));
         long expireTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(CODE_EXPIRE_MINUTES);
 
+        // 发送短信验证码
+        boolean sendResult = smsCodeUtil.sendCode(phone, code);
+        if (!sendResult) {
+            return R.fail("短信发送失败，请稍后重试");
+        }
+
+        // 存储验证码用于后续验证
         codeMap.put(phone, new CodeInfo(code, expireTime));
-        log.info("模拟发送验证码：手机号={}, 验证码={} ", phone, code);
+        log.info("短信验证码已发送：手机号={}, 验证码={}", phone, code);
         return R.ok("验证码已发送");
     }
 
