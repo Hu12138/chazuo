@@ -39,5 +39,9 @@ public class UserServiceImpl implements UserService {
         return userMapper.getRoleByUserId(userId);
     }
 
+    @Override
+    public boolean exists(Long userId) {
+        return userMapper.exists(userId) > 0;
+    }
 
 }

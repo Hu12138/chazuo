@@ -12,4 +12,7 @@ public interface UserService {
 
     // 2.根据用户找到角色
     public String getRoleByUserId(Long userId);
+    
+    // 3.检查用户是否存在
+    boolean exists(Long userId);
 }
