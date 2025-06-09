@@ -88,9 +88,9 @@ public class AuthController {
 
             Map<String, Object> wxData = objectMapper.readValue(body, Map.class);
             log.debug("wxData: {}", wxData);
-//            if (wxData == null || wxData.get("openid") == null) {
-//                return R.fail("获取微信用户信息失败");
-//            }
+            if (wxData == null || wxData.get("openid") == null) {
+                return R.fail("获取微信用户信息失败");
+            }
 
             String openid = (String) wxData.get("openid");
             String sessionKey = (String) wxData.get("session_key");
@@ -98,7 +98,7 @@ public class AuthController {
             log.debug("openid: {}, sessionKey: {}, unionid: {}", openid, sessionKey, unionid);
 
                     // 可进一步处理 openid，例如查询数据库或创建用户等
-            openid = "test";
+//            openid = "test";
             // 微信登录写死角色为普通用户
             String role = "common";
             String token = jwtTokenUtil.generateToken(openid, Collections.singletonList(role));
