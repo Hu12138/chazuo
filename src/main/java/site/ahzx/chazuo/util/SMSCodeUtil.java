@@ -2,19 +2,28 @@ package site.ahzx.chazuo.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+
+@Slf4j
 @Component
 public class SMSCodeUtil {
 
-    private static final Logger log = LoggerFactory.getLogger(SMSCodeUtil.class);
+    // 存储验证码（实际项目建议用 Redis）
+    private final Map<String, CodeInfo> codeMap = new ConcurrentHashMap<>();
+    private static final long CODE_EXPIRE_MINUTES = 5;
+    private final Random random = new Random();
+
     @Value("${sms.app-code}")
     private String appCode;
 
@@ -34,14 +43,29 @@ public class SMSCodeUtil {
     }
 
     /**
-     * 发送短信验证码
-     *
-     * @param phone 手机号
-     * @param code  验证码内容
-     * @return true: 发送成功，false: 发送失败
+     * 发送验证码
      */
-    public boolean sendCode(String phone, String code) {
-        log.debug("phone code:{} {}", phone,code);
+    public boolean sendCode(String phone) {
+        String code = generateCode();
+        long expireTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(CODE_EXPIRE_MINUTES);
+
+        // 发送短信
+        boolean sendResult = sendSms(phone, code);
+        if (!sendResult) {
+            return false;
+        }
+
+        // 存储验证码
+        codeMap.put(phone, new CodeInfo(code, expireTime));
+        log.info("验证码已发送：phone={}, code={}", phone, code);
+        return true;
+    }
+
+    /**
+     * 发送短信验证码
+     */
+    private boolean sendSms(String phone, String code) {
+        log.debug("phone code:{} {}", phone, code);
         String url = host + path;
 
         // 设置 headers
@@ -51,7 +75,7 @@ public class SMSCodeUtil {
 
         // 设置 body 参数
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("content", "code:"+code);
+        body.add("content", "code:" + code);
         body.add("template_id", templateId);
         body.add("phone_number", phone);
 
@@ -77,14 +101,59 @@ public class SMSCodeUtil {
                             response.getBody().contains("OK");
                 }
             }
-            else {
-                return false;
-            }
-
         } catch (Exception e) {
-            System.err.println("发送短信异常: " + e.getMessage());
+            log.error("发送短信异常: ", e);
+        }
+        return false;
+    }
+
+    /**
+     * 验证验证码
+     */
+    public boolean verifyCode(String phone, String inputCode) {
+        CodeInfo codeInfo = codeMap.get(phone);
+        if (codeInfo == null || !codeInfo.getCode().equals(inputCode)) {
+            return false;
+        }
+        if (System.currentTimeMillis() > codeInfo.getExpireTime()) {
+            codeMap.remove(phone); // 清理过期验证码
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 清理验证码
+     */
+    public void clearCode(String phone) {
+        codeMap.remove(phone);
+    }
+
+    /**
+     * 生成6位随机验证码
+     */
+    private String generateCode() {
+        return String.format("%06d", random.nextInt(999999));
+    }
+
+    /**
+     * 验证码信息内部类
+     */
+    private static class CodeInfo {
+        private final String code;
+        private final long expireTime;
+
+        public CodeInfo(String code, long expireTime) {
+            this.code = code;
+            this.expireTime = expireTime;
         }
 
-        return false;
+        public String getCode() {
+            return code;
+        }
+
+        public long getExpireTime() {
+            return expireTime;
+        }
     }
 }

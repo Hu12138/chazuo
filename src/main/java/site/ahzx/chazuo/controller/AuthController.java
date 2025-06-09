@@ -26,7 +26,6 @@ import site.ahzx.chazuo.util.SMSCodeUtil;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -34,8 +33,7 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/auth")
 @Slf4j
 public class AuthController {
-    // 模拟验证码存储，key:手机号，value:验证码和过期时间
-    private static final Map<String, CodeInfo> codeMap = new HashMap<>();
+
     private static final long CODE_EXPIRE_MINUTES = 5;
     private static final Random random = new Random();
 
@@ -57,6 +55,7 @@ public class AuthController {
     private UserContext userContext;
     @Autowired
     private SMSCodeUtil smsCodeUtil;
+
     @Autowired
     public AuthController(JwtTokenUtil jwtTokenUtil, RestTemplate restTemplate, ObjectMapper objectMapper, UserMapper userMapper) {
         this.jwtTokenUtil = jwtTokenUtil;
@@ -129,20 +128,13 @@ public class AuthController {
     public R sendCode(@RequestBody SendCodeBO sendCodeBO) {
         String phone = sendCodeBO.getPhone();
         log.debug("phone is {}", phone);
-        
-        // 生成验证码
-        String code = String.format("%06d", random.nextInt(999999));
-        long expireTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(CODE_EXPIRE_MINUTES);
 
         // 发送短信验证码
-        boolean sendResult = smsCodeUtil.sendCode(phone, code);
+        boolean sendResult = smsCodeUtil.sendCode(phone);
         if (!sendResult) {
             return R.fail("短信发送失败，请稍后重试");
         }
-
-        // 存储验证码用于后续验证
-        codeMap.put(phone, new CodeInfo(code, expireTime));
-        log.info("短信验证码已发送：手机号={}, 验证码={}", phone, code);
+        log.info("短信验证码已发送");
         return R.ok("验证码已发送");
     }
 
@@ -153,16 +145,9 @@ public class AuthController {
         String password = registerBO.getPassword();
         log.debug("phone is {}", phone);
         // 验证验证码
-        CodeInfo codeInfo = codeMap.get(phone);
-        log.debug("codeInfo: {}", codeInfo);
-        if (codeInfo == null || !codeInfo.getCode().equals(code)) {
+        if (!smsCodeUtil.verifyCode(phone, code)) {
             return R.fail("验证码错误或已过期");
         }
-        if (System.currentTimeMillis() > codeInfo.getExpireTime()) {
-            codeMap.remove(phone);
-            return R.fail("验证码已过期");
-        }
-
         // 检查用户是否已存在
         UserPO user = userService.getUserByPhone(phone);
         if (user != null) {
@@ -186,7 +171,7 @@ public class AuthController {
         loginVO.setPhone(phone);
 
         // 清除已使用的验证码
-        codeMap.remove(phone);
+        smsCodeUtil.clearCode(phone);
         return R.ok("注册成功", loginVO);
     }
 
