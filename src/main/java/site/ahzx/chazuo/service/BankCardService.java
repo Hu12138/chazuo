@@ -8,5 +8,5 @@ public interface BankCardService {
     List<BankCardPO> getAll();
     void save(BankCardPO bankCard);
     void update(BankCardPO bankCard);
-    void delete(Long id);
+    int delete(Long id);
 }

@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import site.ahzx.chazuo.aop.UserContext;
 import site.ahzx.chazuo.domain.BO.BankCardBO;
-import site.ahzx.chazuo.domain.CodeInfo;
 import site.ahzx.chazuo.domain.PO.BankCardPO;
 import site.ahzx.chazuo.domain.PO.UserPO;
 import site.ahzx.chazuo.service.BankCardService;
@@ -76,9 +75,13 @@ public class BankCardController {
     }
 
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id) {
-        bankCardService.delete(id);
-        return "删除成功";
+    public R delete(@PathVariable Long id) {
+        if (bankCardService.delete(id)> 0) {
+            return R.ok("删除成功");
+        }
+        else {
+        return R.fail("删除失败");
+    }
     }
 
     private BankCardPO convertToPO(BankCardBO bo) {

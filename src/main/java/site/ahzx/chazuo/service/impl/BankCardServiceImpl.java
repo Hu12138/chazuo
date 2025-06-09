@@ -35,7 +35,7 @@ public class BankCardServiceImpl implements BankCardService {
     }
 
     @Override
-    public void delete(Long id) {
-        bankCardMapper.deleteById(id);
+    public int delete(Long id) {
+       return bankCardMapper.deleteById(id);
     }
 }

@@ -19,7 +19,6 @@ import site.ahzx.chazuo.domain.VO.LoginVO;
 import site.ahzx.chazuo.domain.VO.WxLoginVO;
 import site.ahzx.chazuo.mapper.UserMapper;
 import site.ahzx.chazuo.service.UserService;
-import site.ahzx.chazuo.domain.CodeInfo;
 import site.ahzx.chazuo.util.JwtTokenUtil;
 import site.ahzx.chazuo.util.R;
 import site.ahzx.chazuo.util.SMSCodeUtil;
@@ -27,7 +26,6 @@ import site.ahzx.chazuo.util.SMSCodeUtil;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/auth")

@@ -8,7 +8,7 @@
             id_card, province, city, status, created_time, updated_time
         )
         VALUES (
-                   #{userId}, #{cardNumber}, #{bankName}, #{cardType}, #{cardHolder}, #{card_phone},
+                   #{userId}, #{cardNumber}, #{bankName}, #{cardType}, #{cardHolder}, #{cardPhone},
                    #{idCard}, #{province}, #{city}, #{status}, #{createdTime}, #{updatedTime}
                )
     </insert>
@@ -21,7 +21,7 @@
             bank_name = #{bankName},
             card_type = #{cardType},
             card_holder = #{cardHolder},
-            card_phone = #{card_phone},
+            card_phone = #{cardPhone},
             id_card = #{idCard},
             province = #{province},
             city = #{city},
